@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>導數入門：從第一原理到鏈式法則｜馬Sir教室 M2 學習報告</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="window.__katexReady=true; if(window.__bootMath) window.__bootMath();"></script>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#fff; --ink:#1a2332; --muted:#5a6a7e;
+  --accent:#1e6b5a; --line:#d8e0ea; --shadow:0 8px 28px rgba(26,35,50,.08);
+  --blue:#2b6cb0; --amber:#c47a12;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+header.hero{
+  background:linear-gradient(135deg,#143d36,#1e6b5a 55%,#2b6cb0);color:#fff;
+  border-radius:18px;padding:24px 22px 20px;box-shadow:var(--shadow);margin-bottom:16px
+}
+header h1{margin:0 0 8px;font-size:1.4rem}
+header .sub{opacity:.92;font-size:.95rem}
+.badge{display:inline-block;margin-top:10px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:4px 10px;border-radius:999px;font-size:.8rem;margin-right:6px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.toc a{text-decoration:none;color:var(--accent);background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:.86rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 12px;font-size:1.15rem;color:#143d36;display:flex;align-items:center;gap:10px}
+.card h2 .num{display:inline-flex;width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.card h3{margin:16px 0 8px;font-size:1.02rem;color:var(--blue)}
+.goals{margin:0;padding-left:1.2em}
+.goals li{margin:6px 0}
+.formula{overflow-x:auto;background:#f0f5fb;border-radius:12px;padding:12px 14px;margin:12px 0}
+.note{background:#fff6e8;border-left:4px solid var(--amber);padding:10px 12px;border-radius:0 10px 10px 0;margin:12px 0;font-size:.95rem}
+.fig{margin:14px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.fig figcaption{font-size:.85rem;color:var(--muted);margin-top:8px}
+video{width:100%;max-height:70vh;border-radius:12px;background:#000;border:1px solid var(--line)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.btn{display:inline-block;text-decoration:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;font-weight:600;font-size:.92rem}
+.btn.secondary{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.muted{color:var(--muted);font-size:.9rem}
+footer{margin-top:8px;text-align:center;color:var(--muted);font-size:.85rem}
+ul.plain{padding-left:1.2em}
+ul.plain li{margin:6px 0}
+.katex{font-size:1.08em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>導數入門：從第一原理到鏈式法則</h1>
+    <div class="sub">中五／DSE 數學學習報告｜馬Sir教室</div>
+    <span class="badge">無需 VPN</span>
+    <span class="badge">可嵌入 Google Sites</span>
+    <span class="badge">公式需連網載入（KaTeX）</span>
+  </header>
+
+  <nav class="toc" aria-label="目錄">
+    <a href="#intro">① 導言</a>
+    <a href="#first">② 第一原理</a>
+    <a href="#rules">③ 基礎法則</a>
+    <a href="#chain">④ 鏈式法則</a>
+    <a href="#implicit">⑤ 隱函數／對數</a>
+    <a href="#formulas">⑥ 公式匯總</a>
+    <a href="#second">⑦ 二階導數</a>
+    <a href="#summary">⑧ 總結</a>
+    <a href="#slides">講義 PDF</a>
+  </nav>
+
+  <section class="card" id="intro">
+    <h2><span class="num">1</span>導言</h2>
+    <p>跑車在「某一個特定瞬間」的速度是多少？曲線上某一點的切線斜率又該如何計算？答案都藏在<strong>導數</strong>這個微積分核心概念中。本課帶你掌握這項強大工具。</p>
+    <h3>學習目標</h3>
+    <ul class="goals">
+      <li>理解導數的幾何意義與第一原理。</li>
+      <li>掌握基本求導公式與積／商法則。</li>
+      <li>運用鏈式法則處理複合函數。</li>
+      <li>掌握隱函數求導與對數求導。</li>
+      <li>理解二階導數的概念與計算。</li>
+    </ul>
+  </section>
+
+  <section class="card" id="first">
+    <h2><span class="num">2</span>導數的幾何意義與第一原理</h2>
+    <p>曲線上兩點 \(P\)、\(Q\) 的連線是割線。當 \(Q\) 沿曲線無限逼近 \(P\)，割線趨近切線 \(L\)。切線斜率就是該點的瞬時變化率——導數。</p>
+    <div class="formula">\[ \frac{dy}{dx}=\lim_{\Delta x\to 0}\frac{f(x+\Delta x)-f(x)}{\Delta x} \]</div>
+    <p>極限存在時稱函數在該點可微。第一原理是所有求導公式的基石。</p>
+    <h3>短片</h3>
+    <p class="muted">課堂引入或複習用；請直接在頁面播放。</p>
+    <video controls playsinline preload="metadata" poster="assets/chain-rule-onion.png">
+      <source src="media/derivatives-clip.mp4" type="video/mp4">
+      你的瀏覽器不支援影片播放，請<a href="media/derivatives-clip.mp4">下載短片</a>。
+    </video>
+  </section>
+
+  <section class="card" id="rules">
+    <h2><span class="num">3</span>基礎求導法則：告別極限計算</h2>
+    <ul class="plain">
+      <li><strong>常數法則：</strong>\(\dfrac{d}{dx}(k)=0\)</li>
+      <li><strong>冪法則：</strong>\(\dfrac{d}{dx}(x^n)=nx^{n-1}\)</li>
+      <li><strong>常數倍：</strong>\(\dfrac{d}{dx}[k\cdot f(x)]=k\cdot f'(x)\)</li>
+      <li><strong>和差：</strong>\(\dfrac{d}{dx}(u\pm v)=\dfrac{du}{dx}\pm\dfrac{dv}{dx}\)</li>
+    </ul>
+    <h3>積法則與商法則</h3>
+    <p><strong>積法則：</strong>前導後不導，加後導前不導。</p>
+    <div class="formula">\[ \frac{d}{dx}(uv)=u\frac{dv}{dx}+v\frac{du}{dx} \]</div>
+    <p><strong>商法則：</strong>分母分之（子導母不導，減母導子不導）。</p>
+    <div class="formula">\[ \frac{d}{dx}\left(\frac{u}{v}\right)=\frac{v\dfrac{du}{dx}-u\dfrac{dv}{dx}}{v^2} \]</div>
+  </section>
+
+  <section class="card" id="chain">
+    <h2><span class="num">4</span>複合函數與鏈式法則</h2>
+    <p>求 \(y=(4x^2+3x-2)^8\) 不必展開八次方。設 \(u=4x^2+3x-2\)，則 \(y=u^8\)。鏈式法則：外層變化率乘內層變化率。</p>
+    <div class="formula">\[ \frac{dy}{dx}=\frac{dy}{du}\cdot\frac{du}{dx} \]</div>
+    <div class="note"><strong>小思考：</strong>像齒輪傳動——A 對 C 的轉速＝（A 對 B）×（B 對 C）。</div>
+    <figure class="fig">
+      <img src="assets/chain-rule-onion.png" alt="複合函數鏈式法則：洋蔥層層剝開">
+      <figcaption>資訊圖：外層 \(y=f(u)\)、內層 \(u=g(x)\)；示例 \(y=(4x^2+3x-2)^8\)</figcaption>
+    </figure>
+  </section>
+
+  <section class="card" id="implicit">
+    <h2><span class="num">5</span>隱函數求導法與對數求導法</h2>
+    <h3>隱函數</h3>
+    <p>例如 \(x^2+3y-y^2=4\)，難以單獨解出 \(y\)。步驟：兩邊對 \(x\) 求導（含 \(y\) 的項視為 \(x\) 的函數，乘 \(\dfrac{dy}{dx}\)）；整理後解出 \(\dfrac{dy}{dx}\)。</p>
+    <h3>對數求導</h3>
+    <p>適合複雜乘除，或 \(y=x^x\) 這類底數與指數都含變數的情形：兩邊取 \(\ln y\) → 用對數性質簡化 → 兩邊對 \(x\) 求導 → 解出 \(\dfrac{dy}{dx}\)。</p>
+  </section>
+
+  <section class="card" id="formulas">
+    <h2><span class="num">6</span>特殊函數求導公式大匯總</h2>
+    <p class="muted">三角函數導數中，\(x\) 須用<strong>弧度</strong>。</p>
+    <ul class="plain">
+      <li>\(\dfrac{d}{dx}(\sin x)=\cos x\)</li>
+      <li>\(\dfrac{d}{dx}(\cos x)=-\sin x\)</li>
+      <li>\(\dfrac{d}{dx}(\tan x)=\sec^2 x\)</li>
+      <li>\(\dfrac{d}{dx}(e^x)=e^x\)</li>
+      <li>\(\dfrac{d}{dx}(\ln x)=\dfrac{1}{x}\quad(x&gt;0)\)</li>
+    </ul>
+  </section>
+
+  <section class="card" id="second">
+    <h2><span class="num">7</span>二階導數：變化率的變化率</h2>
+    <p>對 \(f'(x)\) 再求導得二階導數 \(f''(x)\) 或 \(\dfrac{d^2y}{dx^2}\)。</p>
+    <ul class="plain">
+      <li>\(f(x)\)：位移</li>
+      <li>\(f'(x)\)：速度</li>
+      <li>\(f''(x)\)：加速度</li>
+    </ul>
+    <p>幾何上：\(f''&gt;0\) 向上凹（微笑）；\(f''&lt;0\) 向下凹（哭臉）。</p>
+  </section>
+
+  <section class="card" id="summary">
+    <h2><span class="num">8</span>總結</h2>
+    <ul class="plain">
+      <li><strong>導數本質：</strong>切線斜率＝瞬時變化率。</li>
+      <li><strong>法則：</strong>冪、積、商法則可避開繁瑣極限。</li>
+      <li><strong>鏈式法則：</strong>複合函數由外而內層層剝開。</li>
+      <li><strong>隱函數／對數：</strong>兩邊求導；或先取對數再求導。</li>
+      <li><strong>二階導數：</strong>加速度；曲線凹凸。</li>
+    </ul>
+  </section>
+
+  <section class="card" id="slides">
+    <h2>講義 PDF（完整投影片）</h2>
+    <p class="muted">Google Sites 嵌入時，瀏覽器通常會封鎖頁內 PDF 預覽。請用下面按鈕在<strong>新分頁</strong>開啟或下載。</p>
+    <div class="actions">
+      <a class="btn" href="media/lesson-slides.pdf" target="_blank" rel="noopener">新分頁開啟 PDF</a>
+      <a class="btn secondary" href="media/lesson-slides.pdf" download>下載 PDF</a>
+      <a class="btn secondary" href="media/derivatives-clip.mp4" download>下載短片</a>
+    </div>
+  </section>
+
+  <footer>
+    馬Sir教室｜導數學習報告｜公開託管於 GitHub Pages（非 NotebookLM）
+  </footer>
+</div>
+<script>
+window.__bootMath=function(){
+  if(!window.renderMathInElement) return;
+  renderMathInElement(document.body,{
+    delimiters:[
+      {left:"\\[", right:"\\]", display:true},
+      {left:"\\(", right:"\\)", display:false}
+    ],
+    throwOnError:false
+  });
+};
+if(window.__katexReady) window.__bootMath();
+document.addEventListener("DOMContentLoaded", function(){ setTimeout(window.__bootMath, 150); });
+</script>
+</body>
+</html>
