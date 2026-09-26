@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>圓方程：由圓心半徑式到一般式</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root { --bg:#0b1020; --fg:#e6e6e6; --accent:#5b9cff; --accent2:#ffd166; --teal:#2dd4bf; --ok:#3ddc97; --warm:#ff7a5c; --muted:#9aa4b2; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK TC", sans-serif;
+         background:var(--bg); color:var(--fg); line-height:1.7; }
+  .wrap { max-width:760px; margin:0 auto; padding:22px 20px 44px; }
+  header { text-align:center; margin-bottom:18px; }
+  header h1 { margin:0 0 .25rem; font-size:1.45rem; }
+  header p { color:var(--muted); margin:0; font-size:.92rem; }
+  .stage { max-width:460px; margin:0 auto; }
+  canvas { width:100%; aspect-ratio:1/1; background:#11161d; border:1px solid #222b36; border-radius:10px; display:block; }
+  .controls { margin-top:12px; }
+  .controls label { display:block; margin:8px 0 2px; color:var(--muted); font-size:.92rem; }
+  .controls .val { color:var(--accent2); font-weight:600; }
+  input[type=range]{ width:100%; accent-color:var(--accent); }
+  .presets { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .presets button { background:#161c24; color:var(--fg); border:1px solid #2a3340; border-radius:8px; padding:6px 10px; cursor:pointer; }
+  .presets button:hover { border-color:var(--accent); }
+  .readout { margin:12px auto 0; max-width:460px; background:#161c24; border:1px solid #222b36; border-radius:10px; padding:10px 12px; font-size:.92rem; }
+  .readout div { margin:4px 0; }
+  .readout .k { color:var(--muted); }
+  .readout .sub { color:var(--teal); }
+  .readout .gen { color:var(--accent2); }
+  .readout .ok { color:var(--ok); }
+  .divider { border:none; border-top:1px solid #222b36; margin:26px auto 0; max-width:680px; }
+  .explain { max-width:680px; margin:0 auto; }
+  .explain h2 { font-size:1.05rem; color:var(--muted); font-weight:600; margin:22px 0 6px; }
+  .explain p { margin:.55rem 0; }
+  .formula { background:#161c24; border:1px solid #222b36; border-radius:10px; padding:12px 16px; margin:12px 0; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>圓方程：由圓心半徑式到一般式</h1>
+      <p>先拖 $h$、$k$、$r$ 與角度 $\theta$。圖上的直角三角形就是圓心半徑式的理由。</p>
+    </header>
+
+    <section class="stage">
+      <canvas id="c"></canvas>
+      <div class="controls">
+        <label>圓心 h = <span id="h-val" class="val"></span>
+          <input id="h" type="range" min="-4" max="4" step="0.5" value="2"></label>
+        <label>圓心 k = <span id="k-val" class="val"></span>
+          <input id="k" type="range" min="-3" max="3" step="0.5" value="1"></label>
+        <label>半徑 r = <span id="r-val" class="val"></span>
+          <input id="r" type="range" min="0.5" max="4" step="0.5" value="3"></label>
+        <label>取樣角 theta = <span id="theta-val" class="val"></span>°
+          <input id="theta" type="range" min="15" max="165" step="5" value="50"></label>
+      </div>
+      <div class="presets">
+        <button id="preset-video" type="button">影片例子 h=2, k=1, r=3</button>
+        <button id="preset-unit" type="button">單位圓</button>
+        <button id="preset-left" type="button">圓心在左側</button>
+      </div>
+      <div class="readout" id="readout">
+        <div class="sub"><span class="k">圓心半徑式 </span><span id="eq-cr"></span></div>
+        <div><span class="k">展開 </span><span id="eq-exp"></span></div>
+        <div class="gen"><span class="k">一般式 </span><span id="eq-gen"></span></div>
+        <div class="ok"><span class="k">還原 </span><span id="eq-back"></span></div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="explain">
+      <h2>這條圓為什麼有兩個寫法</h2>
+      <p>圓上的點 $(x,y)$ 到圓心 $(h,k)$ 的距離是半徑 $r$。水平差是 $x-h$，垂直差是 $y-k$，勾股定理寫出圓心半徑式：</p>
+      <div class="formula">$$(x-h)^2+(y-k)^2=r^2$$</div>
+      <p>影片主例取 $h=2$、$k=1$、$r=3$，也就是 $(x-2)^2+(y-1)^2=9$。下面的展開把「是什麼」做成「為什麼係數長這樣」。</p>
+
+      <h2>展開，一步只做一件事</h2>
+      <p>用 $(a-b)^2=a^2-2ab+b^2$。先只處理 $x$：</p>
+      <div class="formula">$$(x-2)^2=x^2-2\cdot 2\cdot x+2^2=x^2-4x+4$$</div>
+      <p>交叉項 $-4x$ 的 $-4$ 是 $-2h$，不是圓心座標 $2$ 本身。$y$ 同樣：</p>
+      <div class="formula">$$(y-1)^2=y^2-2y+1$$</div>
+      <p>代回之後兩邊仍相等。兩邊同減 $9$，圓上的點不會改變：</p>
+      <div class="formula">$$x^2-4x+4+y^2-2y+1-9=0$$</div>
+      <p>常數 $4+1-9=-4$，所以</p>
+      <div class="formula">$$x^2+y^2-4x-2y-4=0$$</div>
+
+      <h2>對照一般式，讀出 D、E、F</h2>
+      <p>一般式是 $x^2+y^2+Dx+Ey+F=0$。和上面一列係數：</p>
+      <div class="formula">$$D=-2h,\quad E=-2k,\quad F=h^2+k^2-r^2$$</div>
+      <p>主例：$D=-2\cdot 2=-4$，$E=-2\cdot 1=-2$，$F=2^2+1^2-3^2=-4$。</p>
+      <p>倒過來時，負號是解方程，不是另外約定。由 $D=-2h$ 得 $h=-D/2$。半徑要減去 $F$：</p>
+      <div class="formula">$$r^2=\left(\frac{D}{2}\right)^2+\left(\frac{E}{2}\right)^2-F$$</div>
+      <p>主例：$(-2)^2+(-1)^2-(-4)=4+1+4=9$，圓心回到 $(2,1)$。若只給一般式，要先確認這個量是正數，才是實圓。此頁從 $r>0$ 出發，所以它永遠等於 $r^2$。</p>
+      <p style="color:var(--muted)">想看完整推導被一步步寫出來，見配套影片 <code>CircleEquation.mp4</code>。</p>
+    </section>
+  </div>
+
+<script>
+  const cv = document.getElementById('c');
+  const ctx = cv.getContext('2d');
+  const params = { h: 2, k: 1, r: 3, theta: 50 };
+
+  function fmt(n) {
+    const x = Math.round(n * 100) / 100;
+    if (Object.is(x, -0)) return "0";
+    return String(x);
+  }
+
+  function toPx(x, y, w, h) {
+    const scale = Math.min(w, h) / 14;
+    return [w / 2 + x * scale, h / 2 - y * scale, scale];
+  }
+
+  function drawAxes(w, h) {
+    ctx.strokeStyle = '#2a3340';
+    ctx.lineWidth = 1;
+    for (let gx = -6; gx <= 6; gx++) {
+      const p0 = toPx(gx, -6, w, h);
+      const p1 = toPx(gx, 6, w, h);
+      ctx.beginPath();
+      ctx.moveTo(p0[0], p0[1]);
+      ctx.lineTo(p1[0], p1[1]);
+      ctx.stroke();
+    }
+    for (let gy = -6; gy <= 6; gy++) {
+      const p0 = toPx(-6, gy, w, h);
+      const p1 = toPx(6, gy, w, h);
+      ctx.beginPath();
+      ctx.moveTo(p0[0], p0[1]);
+      ctx.lineTo(p1[0], p1[1]);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = '#5a6678';
+    ctx.lineWidth = 2;
+    const x0 = toPx(-6, 0, w, h);
+    const x1 = toPx(6, 0, w, h);
+    const y0 = toPx(0, -6, w, h);
+    const y1 = toPx(0, 6, w, h);
+    ctx.beginPath();
+    ctx.moveTo(x0[0], x0[1]);
+    ctx.lineTo(x1[0], x1[1]);
+    ctx.moveTo(y0[0], y0[1]);
+    ctx.lineTo(y1[0], y1[1]);
+    ctx.stroke();
+  }
+
+  function draw() {
+    const w = cv.clientWidth, hgt = cv.clientHeight;
+    ctx.clearRect(0, 0, w, hgt);
+    drawAxes(w, hgt);
+
+    const h = params.h, k = params.k, r = params.r;
+    const ang = params.theta * Math.PI / 180;
+    const px = h + r * Math.cos(ang);
+    const py = k + r * Math.sin(ang);
+    const C = toPx(h, k, w, hgt);
+    const Q = toPx(px, k, w, hgt);
+    const P = toPx(px, py, w, hgt);
+    const scale = C[2];
+
+    ctx.strokeStyle = '#5b9cff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(C[0], C[1], r * scale, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#ffd166';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(C[0], C[1]);
+    ctx.lineTo(Q[0], Q[1]);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#3ddc97';
+    ctx.beginPath();
+    ctx.moveTo(Q[0], Q[1]);
+    ctx.lineTo(P[0], P[1]);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#2dd4bf';
+    ctx.beginPath();
+    ctx.moveTo(C[0], C[1]);
+    ctx.lineTo(P[0], P[1]);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffd166';
+    ctx.beginPath();
+    ctx.arc(C[0], C[1], 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#2dd4bf';
+    ctx.beginPath();
+    ctx.arc(P[0], P[1], 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.font = '13px sans-serif';
+    ctx.fillStyle = '#ffd166';
+    ctx.fillText('x - h', (C[0] + Q[0]) / 2 - 18, (C[1] + Q[1]) / 2 + 16);
+    ctx.fillStyle = '#3ddc97';
+    ctx.fillText('y - k', (Q[0] + P[0]) / 2 + 6, (Q[1] + P[1]) / 2);
+    ctx.fillStyle = '#ffd166';
+    ctx.fillText('C(' + fmt(h) + ', ' + fmt(k) + ')', C[0] + 8, C[1] - 8);
+
+    const D = -2 * h;
+    const E = -2 * k;
+    const F = h * h + k * k - r * r;
+    const hBack = -D / 2;
+    const kBack = -E / 2;
+    const r2 = (D / 2) * (D / 2) + (E / 2) * (E / 2) - F;
+
+    document.getElementById('eq-cr').textContent =
+      '(x - ' + fmt(h) + ')^2 + (y - ' + fmt(k) + ')^2 = ' + fmt(r * r);
+    document.getElementById('eq-exp').textContent =
+      'x^2 + y^2 + (' + fmt(D) + ')x + (' + fmt(E) + ')y + (' + fmt(h * h) + ' + ' + fmt(k * k) + ' - ' + fmt(r * r) + ') = 0';
+    document.getElementById('eq-gen').textContent =
+      'x^2 + y^2 + (' + fmt(D) + ')x + (' + fmt(E) + ')y + (' + fmt(F) + ') = 0';
+    document.getElementById('eq-back').textContent =
+      '圓心 (' + fmt(hBack) + ', ' + fmt(kBack) + ')，r^2 = ' + fmt(r2);
+  }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * dpr;
+    cv.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function bindSlider(id, key) {
+    const el = document.getElementById(id);
+    const out = document.getElementById(id + '-val');
+    const update = () => {
+      params[key] = parseFloat(el.value);
+      out.textContent = el.value;
+      draw();
+    };
+    el.addEventListener('input', update);
+    update();
+  }
+
+  function setPreset(h, k, r, theta) {
+    const pairs = [['h', h], ['k', k], ['r', r], ['theta', theta]];
+    pairs.forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      el.value = String(value);
+      el.dispatchEvent(new Event('input'));
+    });
+  }
+
+  document.getElementById('preset-video').addEventListener('click', () => setPreset(2, 1, 3, 50));
+  document.getElementById('preset-unit').addEventListener('click', () => setPreset(0, 0, 1, 50));
+  document.getElementById('preset-left').addEventListener('click', () => setPreset(-2, 1, 2, 50));
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('load', () => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ]
+      });
+    }
+    bindSlider('h', 'h');
+    bindSlider('k', 'k');
+    bindSlider('r', 'r');
+    bindSlider('theta', 'theta');
+    resize();
+  });
+</script>
+</body>
+</html>
